@@ -15,11 +15,11 @@ public class Main {
      */
     public static void main(String[] args) {
         if (args.length != 3) {
-        System.out.println("Please respect this formula ./<executable> <intputFile> <outputDir> <numberOfMutatns>");
-        System.exit(1);
+            System.out.println("Please respect this formula ./<executable> <intputFile> <outputDir> <numberOfMutatns>");
+            System.exit(1);
         }
 
-        String inputFile = args[0];;
+        String inputFile = args[0];
         String outputDir = args[1];
         int numberOfMutatns = Integer.parseInt(args[2]);
 
