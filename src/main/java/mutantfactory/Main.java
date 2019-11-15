@@ -62,10 +62,11 @@ public class Main {
             e.printStackTrace();
         }
 
-        // Run mutant
+        // Run mutant simulator
         Simulator sim = new Simulator(outputDir, inputFile, threads > numberOfMutatns ? numberOfMutatns : threads,
                 numberOfMutatns);
 
+        long startTime = System.nanoTime();
         try {
             List<MutantTestResult> total = sim.runSimulation();
             for (MutantTestResult mtr : total) {
@@ -74,6 +75,10 @@ public class Main {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        long elapsedTime = System.nanoTime() - startTime;
+
+        System.out.println("Total execution time in ms is: " + elapsedTime / 1000000);
+
     }
 
     /**

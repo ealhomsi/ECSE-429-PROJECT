@@ -2,4 +2,5 @@
 ECSE 429 Mutation testing
 
 ### Build
-mvn assembly:assembly
+mvn clean compile assembly:single
+ 
