@@ -33,7 +33,6 @@ public class Main {
         if (!path.exists()) {
             System.out.println("The file " + inputFile + " was not found!");
             System.exit(1);
-
         }
         String fileName = path.getName();
         new File(outputDir).mkdirs();
@@ -69,7 +68,7 @@ public class Main {
 
         try {
             List<MutantTestResult> total = sim.runSimulation();
-            for(MutantTestResult mtr: total) {
+            for (MutantTestResult mtr : total) {
                 System.out.println(mtr.toString());
             }
         } catch (Exception e) {
