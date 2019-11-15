@@ -7,10 +7,8 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
 
-import javax.tools.JavaCompiler;
-import javax.tools.ToolProvider;
-
 import mutantfactory.parser.*;
+import mutantfactory.simulator.MutantTestResult;
 import mutantfactory.simulator.Simulator;
 import mutantfactory.mutant.*;
 
@@ -19,14 +17,16 @@ public class Main {
      * The main method that is going to call the mutators
      */
     public static void main(String[] args) {
-        if (args.length != 3) {
-            System.out.println("Please respect this formula ./<executable> <intputFile> <outputDir> <numberOfMutatns>");
+        if (args.length != 4) {
+            System.out.println(
+                    "Please respect this formula ./mutantfacotry <intputFile> <outputDir> <numberOfMutatns> <#threads>");
             System.exit(1);
         }
 
         String inputFile = args[0];
         String outputDir = args[1];
         int numberOfMutatns = Integer.parseInt(args[2]);
+        int threads = Integer.parseInt(args[3]);
 
         // check if the file exsits and create outputDir
         File path = new File(inputFile);
@@ -54,7 +54,8 @@ public class Main {
         try {
             for (int i = 0; i < numberOfMutatns; i++) {
                 mutants[i] = mlg.generateMutant(contents, operatorsPositions);
-                mutantsList += (i + 1) + ": " + mutants[i].toString() +  System.getProperty("line.separator");;
+                mutantsList += (i + 1) + ": " + mutants[i].toString() + System.getProperty("line.separator");
+                ;
                 mutants[i].saveToFile(outputDir, i + 1);
             }
             Files.write(Paths.get(outputDir, "mutantsList.txt"), mutantsList.getBytes());
@@ -63,10 +64,15 @@ public class Main {
         }
 
         // Run mutant
-        Simulator sim = new Simulator(outputDir, inputFile, 1);
+        Simulator sim = new Simulator(outputDir, inputFile, threads > numberOfMutatns ? numberOfMutatns : threads,
+                numberOfMutatns);
+
         try {
-            sim.runSimulation();
-        }catch(Exception e) {
+            List<MutantTestResult> total = sim.runSimulation();
+            for(MutantTestResult mtr: total) {
+                System.out.println(mtr.toString());
+            }
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

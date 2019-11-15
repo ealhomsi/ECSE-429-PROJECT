@@ -7,7 +7,7 @@ public class PiDigits {
     private static final int SCALE = 10000;
     private static final int ARRINIT = 2000;
 
-    public static String pi_digits(int digits) {
+    public static String methodUnderTest(int digits) {
         StringBuffer pi = new StringBuffer();
         int[] arr = new int[digits + 1];
         int carry = 0;
