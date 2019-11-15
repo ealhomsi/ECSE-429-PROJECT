@@ -6,7 +6,12 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
+
+import javax.tools.JavaCompiler;
+import javax.tools.ToolProvider;
+
 import mutantfactory.parser.*;
+import mutantfactory.simulator.Simulator;
 import mutantfactory.mutant.*;
 
 public class Main {
@@ -49,11 +54,19 @@ public class Main {
         try {
             for (int i = 0; i < numberOfMutatns; i++) {
                 mutants[i] = mlg.generateMutant(contents, operatorsPositions);
-                mutantsList += (i + 1) + ": " + mutants[i].toString() + "\n";
+                mutantsList += (i + 1) + ": " + mutants[i].toString() +  System.getProperty("line.separator");;
                 mutants[i].saveToFile(outputDir, i + 1);
             }
             Files.write(Paths.get(outputDir, "mutantsList.txt"), mutantsList.getBytes());
         } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        // Run mutant
+        Simulator sim = new Simulator(outputDir, inputFile, 1);
+        try {
+            sim.runSimulation();
+        }catch(Exception e) {
             e.printStackTrace();
         }
     }
@@ -74,7 +87,7 @@ public class Main {
             String line = buf.readLine();
             StringBuilder sb = new StringBuilder();
             while (line != null) {
-                sb.append(line).append("\n");
+                sb.append(line).append(System.getProperty("line.separator"));
                 line = buf.readLine();
             }
             fileAsString = sb.toString();

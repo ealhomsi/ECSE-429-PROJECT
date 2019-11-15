@@ -28,7 +28,7 @@ public class MutantListGenerator {
         Position position = positions.get(rand.nextInt(positions.size()));
 
         // figure out its index
-        int operatorIndexInProgram = ordinalIndexOf(inputProgram, "\n", position.line - 1) + position.column;
+        int operatorIndexInProgram = ordinalIndexOf(inputProgram,  System.getProperty("line.separator"), position.line - 1) + position.column + 1;
 
         char originalOperator = inputProgram.charAt(operatorIndexInProgram);
         // fetch a mutant operator

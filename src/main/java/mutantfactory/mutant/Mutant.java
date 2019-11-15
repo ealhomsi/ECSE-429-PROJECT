@@ -70,9 +70,11 @@ public class Mutant {
     }
 
     public void saveToFile(String prefix, int index) {
-        String output = this.contents.toString() + "\n/**\n* " + this.toString() + '\n' + repeat("*", 80) + "\n*/";
+        String mutantName = String.format("%sMutant%d", className, index);
+        String output = String.format("%s\n/**\n* %s\n%s\n**/\n", this.contents.replaceAll(className, mutantName), this.toString(), repeat("*", 60));
+        
         try {
-            Files.write(Paths.get(prefix, String.format("%sMutant%d.java", className, index)), output.getBytes());
+            Files.write(Paths.get(prefix, String.format("%s.java", mutantName)), output.getBytes());
         } catch (IOException e) {
             e.printStackTrace();
         }
