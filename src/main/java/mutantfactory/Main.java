@@ -6,6 +6,7 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Scanner;
 
 import mutantfactory.parser.*;
 import mutantfactory.simulator.MutantTestResult;
@@ -13,6 +14,8 @@ import mutantfactory.simulator.Simulator;
 import mutantfactory.mutant.*;
 
 public class Main {
+    private static final Scanner scanner = new Scanner(System.in);
+
     /**
      * The main method that is going to call the mutators
      */
@@ -43,8 +46,25 @@ public class Main {
         // Parse the file using JavaParser
         JavaParser jp = new JavaParser();
         BinaryOperatorsFetcher bof = new BinaryOperatorsFetcher(jp);
-        List<Position> operatorsPositions = bof.binaryOperationPositions(contents);
 
+        System.out.println("Phase one possible faults");
+        System.out.println("#######################");
+        List<Position> operatorsPositions = bof.binaryOperationPositions(contents);
+        String potentialFaults = "";
+        for (Position op : operatorsPositions) {
+            potentialFaults += String.format("Operator at %s \n", op.toString());
+        }
+        try {
+            Files.write(Paths.get(outputDir, "potentialFaults.txt"), potentialFaults.getBytes());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        System.out.println("The file potentialFaults.txt was generated successfully");
+        System.out.println("#######################");
+        promptReadEnter();
+
+        System.out.println("Phase two mutants generation");
+        System.out.println("#######################");
         // Generate mutant list and the mutants
         MutantListGenerator mlg = new MutantListGenerator(fileName.substring(0, fileName.lastIndexOf('.')));
 
@@ -61,7 +81,13 @@ public class Main {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        System.out.println("The file mutantsList.txt and the mutants files were generated successfully");
+        System.out.println("#######################");
+        promptReadEnter();
 
+        System.out.println("Phase three mutants simulation");
+        System.out.println("#######################");
+        String simulatorOutput = "";
         // Run mutant simulator
         Simulator sim = new Simulator(outputDir, inputFile, threads > numberOfMutatns ? numberOfMutatns : threads,
                 numberOfMutatns);
@@ -70,15 +96,24 @@ public class Main {
         try {
             List<MutantTestResult> total = sim.runSimulation();
             for (MutantTestResult mtr : total) {
-                System.out.println(mtr.toString());
+                simulatorOutput += mtr.toString() + System.getProperty("line.separator");
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
         long elapsedTime = System.nanoTime() - startTime;
 
-        System.out.println("Total execution time in ms is: " + elapsedTime / 1000000);
+        simulatorOutput += "Total execution time in ms is: " + elapsedTime / 1000000 + System.getProperty("line.separator");
 
+        try {
+            Files.write(Paths.get(outputDir, "simulatorOutput.txt"), simulatorOutput.getBytes());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        System.out.println("The file simulatorOutput.txt was generated successfully");
+        System.out.println("#######################");
+        promptReadEnter();
+        System.out.println("Finish");
     }
 
     /**
@@ -107,5 +142,13 @@ public class Main {
             e.printStackTrace();
         }
         return fileAsString;
+    }
+
+    /**
+     * blocks the screen and read enter
+     */
+    private static void promptReadEnter() {
+        System.out.println("Read Enter Key to continue.");
+        scanner.nextLine();
     }
 }
