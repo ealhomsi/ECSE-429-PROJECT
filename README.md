@@ -7,6 +7,9 @@ ECSE 429 Mutation testing
 ### Design
 ![Image description](./doc/design.png)
 
+### Project Report
+[Report](./doc/reports/ecse429-finalreport.pdf)
+
 ### How to Build and run
 ```
 mvn clean compile assembly:single
